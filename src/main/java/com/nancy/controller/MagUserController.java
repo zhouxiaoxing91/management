@@ -48,7 +48,7 @@ public class MagUserController {
         return responseMsg;
     }
 
-    @RequestMapping("")
+    @RequestMapping("/index")
     public String index(){
         return "index";
     }

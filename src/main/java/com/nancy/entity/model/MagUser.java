@@ -1,20 +1,26 @@
 package com.nancy.entity.model;
 
+import java.util.Date;
+
 public class MagUser {
-    private String id;
+    private String userId;
 
     private String userName;
 
-    private String userPhone;
+    private String password;
 
-    private String userAddress;
+    private Date createTime;
 
-    public String getId() {
-        return id;
+    private Date updateTime;
+
+    private String memo;
+
+    public String getUserId() {
+        return userId;
     }
 
-    public void setId(String id) {
-        this.id = id == null ? null : id.trim();
+    public void setUserId(String userId) {
+        this.userId = userId == null ? null : userId.trim();
     }
 
     public String getUserName() {
@@ -25,19 +31,35 @@ public class MagUser {
         this.userName = userName == null ? null : userName.trim();
     }
 
-    public String getUserPhone() {
-        return userPhone;
+    public String getPassword() {
+        return password;
     }
 
-    public void setUserPhone(String userPhone) {
-        this.userPhone = userPhone == null ? null : userPhone.trim();
+    public void setPassword(String password) {
+        this.password = password == null ? null : password.trim();
     }
 
-    public String getUserAddress() {
-        return userAddress;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setUserAddress(String userAddress) {
-        this.userAddress = userAddress == null ? null : userAddress.trim();
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public String getMemo() {
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo == null ? null : memo.trim();
     }
 }

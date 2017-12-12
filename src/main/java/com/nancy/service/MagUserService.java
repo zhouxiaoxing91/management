@@ -23,4 +23,11 @@ public interface MagUserService {
      */
     public List<MagUser> findUserByName(String name) ;
 
+    /**
+     * 根据用户ID，获得用户信息
+     * @param: name
+     * @return:
+     */
+    public MagUser findUserByID(String userId) ;
+
 }

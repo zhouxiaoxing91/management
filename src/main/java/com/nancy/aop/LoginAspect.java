@@ -1,5 +1,9 @@
 package com.nancy.aop;
 
+import com.nancy.dao.MagUserMapper;
+import com.nancy.entity.dto.ResponseMsg;
+import com.nancy.entity.model.MagUser;
+import com.nancy.utils.UserUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -8,14 +12,19 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
 
 /**
  * All rights Reserved, Designed By guangfeng.zhou
@@ -32,31 +41,48 @@ import javax.servlet.http.HttpServletRequest;
 public class LoginAspect {
     private Logger logger = LoggerFactory.getLogger(getClass()) ;
 
-    @Autowired
-    private  HttpServletRequest request;
+    ThreadLocal<Long> startTime = new ThreadLocal<>() ;
 
-    @Pointcut("within(com.nancy.controller..*) && !within(com.nancy.controller.LoginController)")
+    @Resource
+    private UserUtils userUtils ;
+
+    private MagUser magUser ;
+
+    @Pointcut("within(com.nancy.controller..*) && !within(com.nancy.controller.CommonController)")
     public void loginCheck(){
 
     }
 
     @Before(value = "loginCheck()")
     public void before(JoinPoint point){
-
+        logger.info("====={}  invoke begin===================", point.getSignature().getDeclaringTypeName());
+        startTime.set(System.currentTimeMillis());
+        magUser = userUtils.getUserByName() ;
     }
 
     @Around("loginCheck()")
-    public Object around(ProceedingJoinPoint point){
-        logger.info("=====需要先登录======");
+    public Object around(ProceedingJoinPoint pjp){
+        MethodSignature signature = (MethodSignature) pjp.getSignature();
+        Method method = signature.getMethod(); // 获取被拦截的方法
+        String methodName = method.getName();  // 获取被拦截的方法名
 
         Object obj = null ;
         try {
-            obj = point.proceed() ;
+            if(magUser==null || StringUtils.isEmpty(magUser.getUserId())){
+                logger.info("=====请先登录MAG系统======");
+                return "redirect:/login/login";
+//                return new ResponseMsg(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "请先登录MAG系统");
+            }
+
+            obj = pjp.proceed() ;
         } catch (Throwable throwable) {
-            throwable.printStackTrace();
+            logger.info("=====执行方法异常======");
+            return new ResponseMsg(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "执行方法异常");
+        }finally {
+            logger.info("====={}.{} invoke end , cost time {}ms.", signature.getDeclaringTypeName(), methodName, System.currentTimeMillis()-startTime.get());
         }
+
         return obj ;
-        //        return "redirect:/login";
     }
 
     @AfterReturning(pointcut = "loginCheck()", returning = "retVal")
@@ -66,7 +92,6 @@ public class LoginAspect {
 
     @AfterThrowing(pointcut= "loginCheck()", throwing = "e")
     public void afterThrowing(JoinPoint point, Throwable e){
-
     }
 
 }

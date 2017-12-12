@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,10 +36,11 @@ public class MagUserMapperTest extends BaseJunit{
     @Test
     public void msgUserTest(){
         MagUser magUser = new MagUser() ;
-        magUser.setId(UUId.getUUid());
-        magUser.setUserAddress("穿山街道22");
-        magUser.setUserName("罗小妮21");
-        magUser.setUserPhone("13294103755") ;
+        magUser.setUserId("admin");
+        magUser.setUserName("罗小妮");
+        magUser.setPassword("123456");
+        magUser.setUpdateTime(new Date());
+        magUser.setCreateTime(new Date());
         logger.info("magUser" + new Gson().toJson(magUser));
 
         magUserMapper.insertSelective(magUser) ;

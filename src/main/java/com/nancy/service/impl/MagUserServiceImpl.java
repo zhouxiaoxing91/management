@@ -31,4 +31,8 @@ public class MagUserServiceImpl implements MagUserService {
     @Override public List<MagUser> findUserByName(String name) {
         return magUserMapper.findUserByName(name) ;
     }
+
+    @Override public MagUser findUserByID(String userId) {
+        return magUserMapper.selectByPrimaryKey(userId);
+    }
 }

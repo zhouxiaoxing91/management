@@ -32,4 +32,5 @@ public interface MagUserMapper {
     int updateByPrimaryKey(MagUser record);
 
     List<MagUser> findUserByName(String name);
+
 }
